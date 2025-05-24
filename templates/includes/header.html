@@ -1,0 +1,89 @@
+{% load static %}
+<header class="sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <!-- Logo -->
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'images/logo.png' %}" alt="Sanskruti Travels" height="50" onerror="this.src='https://via.placeholder.com/180x50?text=Sanskruti+Travels'; this.onerror='';">
+                <span class="ms-2 d-none d-md-inline fw-bold text-primary">Sanskruti Travels</span>
+            </a>
+            
+            <!-- Mobile Menu Toggle -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Main Navigation -->
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="nationalDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            National Tours
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="nationalDropdown">
+                            <li><a class="dropdown-item" href="{% url 'package_list' %}?type=national">All National Tours</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Popular Destinations</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'package_list' %}?type=national&state=Kashmir">Kashmir</a></li>
+                            <li><a class="dropdown-item" href="{% url 'package_list' %}?type=national&state=Kerala">Kerala</a></li>
+                            <li><a class="dropdown-item" href="{% url 'package_list' %}?type=national&state=Goa">Goa</a></li>
+                            <li><a class="dropdown-item" href="{% url 'package_list' %}?type=national&state=Rajasthan">Rajasthan</a></li>
+                            <li><a class="dropdown-item" href="{% url 'state_list' %}">All States</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="internationalDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            International Tours
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="internationalDropdown">
+                            <li><a class="dropdown-item" href="{% url 'package_list' %}?type=international">All International Tours</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Popular Destinations</h6></li>
+                            <li><a class="dropdown-item" href="{% url 'package_list' %}?type=international&country=UAE">Dubai</a></li>
+                            <li><a class="dropdown-item" href="{% url 'package_list' %}?type=international&country=Singapore">Singapore</a></li>
+                            <li><a class="dropdown-item" href="{% url 'package_list' %}?type=international&country=Thailand">Thailand</a></li>
+                            <li><a class="dropdown-item" href="{% url 'package_list' %}?type=international&country=Indonesia">Bali</a></li>
+                            <li><a class="dropdown-item" href="{% url 'country_list' %}">All Countries</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'custom-tour' in request.path %}active{% endif %}" href="{% url 'custom_tour' %}">Custom Tour</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'about' in request.path %}active{% endif %}" href="{% url 'about' %}">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'contact' in request.path %}active{% endif %}" href="{% url 'contact' %}">Contact</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i> Account
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            {% if user.is_staff or user.user_type == 'admin' %}
+                            <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin Dashboard</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="{% url 'profile' %}">My Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'bookings' %}">My Bookings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-primary btn-sm ms-lg-2 mt-2 mt-lg-0 px-3" href="{% url 'login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary btn-sm text-white ms-lg-2 mt-2 mt-lg-0 px-3" href="{% url 'register' %}">Register</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

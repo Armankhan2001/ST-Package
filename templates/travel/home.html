@@ -1,0 +1,526 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Sanskruti Travels - Your Journey, Our Expertise{% endblock %}
+
+{% block meta_description %}Sanskruti Travels offers personalized travel packages across India and international destinations. Book your dream vacation with expert travel planners and enjoy a hassle-free experience.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section position-relative">
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=1200&h=600" class="d-block w-100" alt="Kashmir">
+                <div class="carousel-caption">
+                    <h1>Discover the Beauty of India</h1>
+                    <p>Explore breathtaking landscapes and rich cultural experiences</p>
+                    <a href="{% url 'package_list' %}?type=national" class="btn btn-primary btn-lg">Explore National Tours</a>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="https://images.unsplash.com/photo-1519677100203-a0e668c92439?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=1200&h=600" class="d-block w-100" alt="Dubai">
+                <div class="carousel-caption">
+                    <h1>International Adventures Await</h1>
+                    <p>Experience luxury and adventure across the globe</p>
+                    <a href="{% url 'package_list' %}?type=international" class="btn btn-primary btn-lg">Explore International Tours</a>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="https://images.unsplash.com/photo-1576021182211-9ea8dced3690?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=1200&h=600" class="d-block w-100" alt="Custom Tour">
+                <div class="carousel-caption">
+                    <h1>Create Your Perfect Journey</h1>
+                    <p>Customized tours tailored to your preferences</p>
+                    <a href="{% url 'custom_tour' %}" class="btn btn-primary btn-lg">Customize Your Tour</a>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</section>
+
+<!-- Search Form Section -->
+<section class="search-section bg-light py-4">
+    <div class="container">
+        <form action="{% url 'package_list' %}" method="get" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label for="destination" class="form-label">Destination</label>
+                <input type="text" class="form-control" id="destination" name="q" placeholder="Where do you want to go?">
+            </div>
+            <div class="col-md-3">
+                <label for="packageType" class="form-label">Package Type</label>
+                <select class="form-select" id="packageType" name="type">
+                    <option value="">All Types</option>
+                    <option value="national">National</option>
+                    <option value="international">International</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="duration" class="form-label">Duration</label>
+                <select class="form-select" id="duration" name="duration">
+                    <option value="">Any Duration</option>
+                    <option value="short">1-3 Days</option>
+                    <option value="medium">4-7 Days</option>
+                    <option value="long">8+ Days</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">Search Packages</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- Featured Packages Section -->
+<section class="featured-packages py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="fw-bold">Featured Packages</h2>
+            <p class="text-muted">Discover our most popular travel experiences</p>
+        </div>
+        
+        <div class="row">
+            {% for package in featured_packages %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 package-card">
+                    <div class="position-relative">
+                        {% if package.main_image %}
+                        <img src="{{ package.main_image.url }}" class="card-img-top" alt="{{ package.title }}">
+                        {% else %}
+                        <img src="https://via.placeholder.com/400x300?text=Sanskruti+Travels" class="card-img-top" alt="{{ package.title }}">
+                        {% endif %}
+                        <div class="package-badge position-absolute top-0 end-0 m-3">
+                            <span class="badge {% if package.type == 'national' %}bg-success{% else %}bg-info{% endif %}">
+                                {{ package.type|title }}
+                            </span>
+                        </div>
+                        {% if package.best_seller %}
+                        <div class="package-badge position-absolute top-0 start-0 m-3">
+                            <span class="badge bg-danger">Bestseller</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ package.title }}</h5>
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                            <span>{{ package.destinations }}</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-clock text-primary me-2"></i>
+                            <span>{{ package.duration }}</span>
+                        </div>
+                        <div class="rating mb-2">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= package.rating %}
+                                <i class="fas fa-star text-warning"></i>
+                                {% elif forloop.counter <= package.rating|add:"0.5" %}
+                                <i class="fas fa-star-half-alt text-warning"></i>
+                                {% else %}
+                                <i class="far fa-star text-warning"></i>
+                                {% endif %}
+                            {% endfor %}
+                            <span class="ms-1 text-muted small">({{ package.review_count }} reviews)</span>
+                        </div>
+                        <div class="package-price mb-3">
+                            <span class="price-label">Starting from</span>
+                            <span class="price fw-bold">₹{{ package.price|floatformat:"0" }}</span>
+                            <span class="text-muted small">per person</span>
+                        </div>
+                        <p class="card-text text-muted mb-3">{{ package.description|truncatechars:100 }}</p>
+                    </div>
+                    <div class="card-footer bg-white border-top-0 d-flex justify-content-between">
+                        <a href="{{ package.get_absolute_url }}" class="btn btn-outline-primary">View Details</a>
+                        <a href="{% url 'book_package' package.id %}" class="btn btn-primary">Book Now</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p>No featured packages available at this time. Please check back soon!</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'package_list' %}" class="btn btn-lg btn-outline-primary">View All Packages</a>
+        </div>
+    </div>
+</section>
+
+<!-- Popular Destinations Section -->
+<section class="destinations-section py-5 bg-light">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="fw-bold">Popular Destinations</h2>
+            <p class="text-muted">Explore our most sought-after locations</p>
+        </div>
+        
+        <div class="row">
+            <!-- National Destinations -->
+            <div class="col-lg-6 mb-4">
+                <h3 class="h4 mb-4">Top Indian Destinations</h3>
+                <div class="row g-3">
+                    {% for package in national_packages %}
+                    <div class="col-md-6">
+                        <div class="card destination-card">
+                            <div class="position-relative">
+                                {% if package.main_image %}
+                                <img src="{{ package.main_image.url }}" class="card-img-top" alt="{{ package.title }}">
+                                {% else %}
+                                <img src="https://via.placeholder.com/300x200?text={{ package.title }}" class="card-img-top" alt="{{ package.title }}">
+                                {% endif %}
+                                <div class="destination-overlay">
+                                    <div class="destination-content">
+                                        <h5 class="card-title text-white">{{ package.title }}</h5>
+                                        <p class="card-text text-white">{{ package.duration }}</p>
+                                        <a href="{{ package.get_absolute_url }}" class="btn btn-sm btn-light">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{% url 'package_list' %}?type=national" class="btn btn-outline-primary">View All National Tours</a>
+                </div>
+            </div>
+            
+            <!-- International Destinations -->
+            <div class="col-lg-6 mb-4">
+                <h3 class="h4 mb-4">Top International Destinations</h3>
+                <div class="row g-3">
+                    {% for package in international_packages %}
+                    <div class="col-md-6">
+                        <div class="card destination-card">
+                            <div class="position-relative">
+                                {% if package.main_image %}
+                                <img src="{{ package.main_image.url }}" class="card-img-top" alt="{{ package.title }}">
+                                {% else %}
+                                <img src="https://via.placeholder.com/300x200?text={{ package.title }}" class="card-img-top" alt="{{ package.title }}">
+                                {% endif %}
+                                <div class="destination-overlay">
+                                    <div class="destination-content">
+                                        <h5 class="card-title text-white">{{ package.title }}</h5>
+                                        <p class="card-text text-white">{{ package.duration }}</p>
+                                        <a href="{{ package.get_absolute_url }}" class="btn btn-sm btn-light">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{% url 'package_list' %}?type=international" class="btn btn-outline-primary">View All International Tours</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us Section -->
+<section class="why-choose-section py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="fw-bold">Why Choose Sanskruti Travels</h2>
+            <p class="text-muted">Your trusted partner for memorable travel experiences</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="icon-box mx-auto mb-4">
+                        <i class="fas fa-gem fa-2x text-primary"></i>
+                    </div>
+                    <h3 class="h5">Expert Guidance</h3>
+                    <p class="text-muted">Our experienced travel experts provide personalized recommendations and support throughout your journey.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="icon-box mx-auto mb-4">
+                        <i class="fas fa-hand-holding-heart fa-2x text-primary"></i>
+                    </div>
+                    <h3 class="h5">Tailored Experiences</h3>
+                    <p class="text-muted">We customize every tour to match your preferences, ensuring a perfect travel experience.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="icon-box mx-auto mb-4">
+                        <i class="fas fa-wallet fa-2x text-primary"></i>
+                    </div>
+                    <h3 class="h5">Value for Money</h3>
+                    <p class="text-muted">Get the best deals and exclusive offers on premium travel packages without compromising quality.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="icon-box mx-auto mb-4">
+                        <i class="fas fa-headset fa-2x text-primary"></i>
+                    </div>
+                    <h3 class="h5">24/7 Support</h3>
+                    <p class="text-muted">Our dedicated customer service team is available round the clock to assist you during your travels.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="icon-box mx-auto mb-4">
+                        <i class="fas fa-shield-alt fa-2x text-primary"></i>
+                    </div>
+                    <h3 class="h5">Safe & Secure</h3>
+                    <p class="text-muted">Your safety is our priority. We follow strict safety protocols and partner with reliable service providers.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="icon-box mx-auto mb-4">
+                        <i class="fas fa-star fa-2x text-primary"></i>
+                    </div>
+                    <h3 class="h5">Unique Experiences</h3>
+                    <p class="text-muted">Discover hidden gems and authentic local experiences that make your journey truly memorable.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section py-5 bg-light">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <h2 class="fw-bold">What Our Travelers Say</h2>
+            <p class="text-muted">Read genuine experiences from our satisfied customers</p>
+        </div>
+        
+        <div class="row">
+            {% for testimonial in testimonials %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="testimonial-card p-4 bg-white rounded shadow-sm h-100">
+                    <div class="testimonial-rating mb-3">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= testimonial.rating %}
+                            <i class="fas fa-star text-warning"></i>
+                            {% else %}
+                            <i class="far fa-star text-warning"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    
+                    <p class="testimonial-text mb-4">"{{ testimonial.content|truncatechars:150 }}"</p>
+                    
+                    <div class="testimonial-author d-flex align-items-center">
+                        {% if testimonial.image %}
+                        <img src="{{ testimonial.image.url }}" alt="{{ testimonial.name }}" class="rounded-circle me-3" width="50" height="50">
+                        {% else %}
+                        <div class="author-avatar rounded-circle me-3 d-flex align-items-center justify-content-center bg-primary text-white" style="width: 50px; height: 50px;">
+                            {{ testimonial.name|make_list|first|upper }}
+                        </div>
+                        {% endif %}
+                        <div>
+                            <h6 class="mb-0">{{ testimonial.name }}</h6>
+                            <small class="text-muted">{{ testimonial.location }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p>No testimonials available at this time. Be the first to share your experience!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mb-4 mb-lg-0">
+                <h2 class="fw-bold">Ready to Start Your Journey?</h2>
+                <p class="lead mb-0">Contact us today and let us plan your perfect vacation!</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{% url 'custom_tour' %}" class="btn btn-light btn-lg me-2 mb-2 mb-md-0">Create Custom Tour</a>
+                <a href="https://wa.me/{{ settings.WHATSAPP_NUMBER }}" target="_blank" class="btn btn-outline-light btn-lg">
+                    <i class="fab fa-whatsapp me-2"></i>WhatsApp Us
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Hero Section Styles */
+    .hero-section {
+        height: 600px;
+        overflow: hidden;
+    }
+    
+    .carousel-item img {
+        height: 600px;
+        object-fit: cover;
+    }
+    
+    .carousel-caption {
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        padding: 20px;
+        bottom: 100px;
+    }
+    
+    /* Package Card Styles */
+    .package-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .package-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .package-card .card-img-top {
+        height: 200px;
+        object-fit: cover;
+    }
+    
+    .package-price {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .price {
+        color: #ff5722;
+        font-size: 1.25rem;
+    }
+    
+    /* Destination Card Styles */
+    .destination-card {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+        height: 200px;
+    }
+    
+    .destination-card img {
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+    
+    .destination-card:hover img {
+        transform: scale(1.1);
+    }
+    
+    .destination-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7));
+        display: flex;
+        align-items: flex-end;
+        transition: background 0.3s;
+    }
+    
+    .destination-card:hover .destination-overlay {
+        background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.8));
+    }
+    
+    .destination-content {
+        padding: 20px;
+        width: 100%;
+    }
+    
+    /* Feature Card Styles */
+    .feature-card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .icon-box {
+        width: 70px;
+        height: 70px;
+        background-color: rgba(var(--bs-primary-rgb), 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Testimonial Styles */
+    .testimonial-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .testimonial-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    /* Media Queries */
+    @media (max-width: 767px) {
+        .hero-section,
+        .carousel-item img {
+            height: 400px;
+        }
+        
+        .carousel-caption {
+            bottom: 40px;
+            padding: 15px;
+        }
+        
+        .carousel-caption h1 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize homepage carousels and animations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Package card hover effects
+        const packageCards = document.querySelectorAll('.package-card');
+        packageCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.classList.add('shadow-lg');
+            });
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('shadow-lg');
+            });
+        });
+    });
+</script>
+{% endblock %}
