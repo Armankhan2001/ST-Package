@@ -64,7 +64,7 @@ export default function Header() {
             </Link>
           ))}
           <Link
-            href="/book-package"
+            href="/package-list"
             className="bg-[#FF9933] text-white px-4 py-2 rounded-md hover:bg-[#000080] transition"
           >
             Book Now
